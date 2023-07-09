@@ -1,0 +1,414 @@
+---
+title: ""
+author: ""
+date: ""
+e-mail:
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Odrzucone bazy danych:
+
+wymienić przejrzane i odrzucone zbiory danych, wraz z ich adresem oraz podaniem przyczyny odrzucenia (może być skwitowane jednym zdaniem lub równoważnikiem zdania, np. “szereg czasowy”, “brak zmiennych kategorycznych”, “zbyt mało poziomów”, etc.). Ta część może być zorganizowana dla czytelności w postaci tabeli z 3 kolumnami - nazwa zbioru danych, adres, przyczyna odrzucenia;
+
+### Poniżej zestawienie odrzuconych baz danych w formie tabelki.
+```{r}
+library(data.table)
+table <- data.table(
+  "Baza danych" = c("Dog intelligence and Sizes", "Computer Hardware", "Lung Cancer", "Campus Recruitment", "2019/W26: Alcohol Consumption by Country", "Tetuan City power consumption", "World Energy Consumption"),
+  "Adres WWW" = c("https://www.kaggle.com/datasets/thedevastator/canine-intelligence-and-size", "https://data.world/uci/computer-hardware", "https://data.world/uci/lung-cancer", "https://www.kaggle.com/datasets/benroshan/factors-affecting-campus-placement", "https://data.world/makeovermonday/2019w26","https://www.kaggle.com/datasets/gmkeshav/tetuan-city-power-consumption", "https://www.kaggle.com/datasets/pralabhpoudel/world-energy-consumption"),
+  "Powód odrzucenia" = c("Niewystarczające dane", "Niewystarczające dane", "Niewystarczające dane", "Niewystarczające dane", "Niewystarczające dane","Brak danych typu factor", "Główna zmienna ma więcej niż dwa poziomy"))
+library(knitr)
+kable(table)
+```
+
+
+
+# Wybrane bazy danych:
+##### Kryteria wyszukiwania zbiorów danych są zależne od danego repozytorium. 
+<span style="font-size: 17px">W bazach z automatyczną przeszukiwarką głównymi kryteriami wyszukiwania były typy *"integer i factor"*, a także użycie filtrowania po najwyżej ocenianych. W niektórych przypadkach używanie *"#big data"*, aby uwidocznić zbiory z jak największa ilością danych.</span>
+
+
+Automatyczne przeszukiwanie repozytoriów jest możliwe na stronie **www.kaggle.com** czy **www.data.world** - gdzie można wyszukiwać bazy danych po słowach kluczowych, hasztagach, czy osobach publikujących.
+
+
+Natomiast w przypadku repozytorium Pakietów R - takich jak **https://vincentarelbundock.github.io/Rdatasets/datasets.html** nie ma możliwości automatycznego przeszukiwania. Można skorzystać ewentualnie z CTRL+F - choć wtedy musimy wiedzieć czego szukamy w takiej bazie. 
+Wyszukując pasujące zbiory danych do analizy przyjęłam zasadę odrzucania na wstępie pozycji ze zbyt małą ilością wierszy. Pomocna jest w tym tabelka zestawiająca najważniejsze dane ilościowe każdego umieszczonego w repozytorium pliku. 
+
+
+## Poniżej zestawienie baz danych spełniających kryteria w formie tabelki.
+
+```{r}
+library(data.table)
+table1 <- data.table(
+  "Baza danych" = c( "Childhood Allergies: Prevalence, Demographics","Diamonds Prices", "Fertility and Women's Labor Supply","Vocabulary and Education", "Airbag and other influences on accident fatalities"),
+  "Adres WWW" = c("https://www.kaggle.com/datasets/thedevastator/childhood-allergies-prevalence-diagnosis-and-tre","https://www.kaggle.com/datasets/nancyalaswad90/diamonds-prices","https://vincentarelbundock.github.io/Rdatasets/datasets.html", "https://vincentarelbundock.github.io/Rdatasets/csv/carData/Vocab.csv", "https://vincentarelbundock.github.io/Rdatasets/csv/DAAG/nassCDS.csv"),
+  "Ilość wierszy" = c("333201","53944","254654","30351","26217"),
+  "Ilość kolumn" = c("50","11","9","4","15"))
+library(knitr)
+kable(table1)
+
+```
+wymienić i skrótowo opisać te zbiory danych, które dobrze rokują spełnienie wymagań. Może ich być kilka;
+
+  - **Childhood Allergies: Prevalence, Demographics** - W zbiorze danych znajduje się *333200* wierszy i *50* kolumn (zmiennych). Pierwszą kolumnę `SUBJECT ID` z numerami wierszy usuwamy z analizy. Główną kolumną jest kolumna `ATOPIC_MARCH_COHORT`, określająca kohortę pacjenta (traktujemy ją jako zmienną kategoryczną z 2 poziomami - TRUE i FALSE). Również jako zmienne kategoryczne traktujemy 5 kolumn: `GENDER_FACTOR` (2 poziomy), `RACE_FACTOR` (5 poziomów), `ETHNICITY_FACTOR` (2 poziomy), `PAYER_FACTOR` (2 poziomy). `NUM_ASTHMARX` - to jedna kolumna typu `integer`. Pozostałe 42 kolumny nalezą do typu `numeric`.
+
+  - <span style="color:blue">**Diamonds Prices**</span> - Główna zmienna modelowana w danych to `carat` typu `numeric` określająca wagę diamentów, od której zależy jego cena. W bazie mamy *53943* wierszy i *11* kolumn (atrybutów).Dwie kolumny: `price` i `X` są danymi typu `integer` - dane z numerem porządkowym należy usunąć z analizy. Jako zmienne kategoryczne traktujemy 3 kolumny: `color`(7 poziomów), `cut` (5 poziomów), `clarity`(8 poziomów). Pozostałe zmienne to dane typu `numeric`.
+
+  - **Fertility and Women’s Labor Supply** - W zbiorze danych znajduje się *254 654* wierszy i *8* kolumn (zmiennych). *6* kolumn typu `factor` i *2* kolumny typu `numeric`. Główną zmienną modelowaną przez zbiór danych jest kolumna `morekids` (2 poziomy) określająca, czy dana kobieta ma więcej niż 2 dzieci. Pozostałe zmienne są uzupełniające. 
+
+  - **Vocabulary and Education** - W zbiorze znajduje się *30351* wierszy i *4* kolumny. Tylko jedna z nich jest zmienną kategoryczną typu `factor` podzieloną na dwa poziomy: `male` i `female`. Trzy pozostałe kolumny zawierają dane typu `numeric`. Numer porządkowy należy usunąć z analizy danych. Główna zmienna modelowana przez zbiór to `sex`(zmienna kategoryczna z 2 poziomami). Zbiór pozwala na uzyskanie zależności (w odniesieniu do płci respondenta) między wykształceniem (w latach), a punktami zdobytymi w przeprowadzonym teście słownictwa, gdzie maksymalny możliwy wynik do uzyskania to `10`.
+  - **Airbag and other influences on accident fatalities** - W zbiorze danych znajduje się *26217* wierszy i *15* kolumn (zmiennych). Baza zawiera 7 kolumn typu `character`, które należy zamienić na `factor` wykorzystując komendę `as.factor`: dvcat z 5 poziomami (prędkość uderzenia), dead (factor z 2 poziomami `alive/dead`), airbag (factor z 2 poziomami `none/airbag`), seatbelt (factor z 2 poziomami `none/belted`), sex (2 poziomy `m/f`), occRole (factor z 2 poziomami `driver/pass`). Numer porządkowy ID należy usunąć z analizy danych. 7 kolumn zawiera dane typu `integer`. Główna zmienna modelowana przez zbiór to `dead` - określająca, czy ktoś przeżył wypadek, czy nie. Pozostałe zmienne to atrybuty wpływające na przeżycie poszkodowanego. 
+
+
+## 1. Opisz, jak odczytujesz dane. Opisz argumenty zastosowane przy wywołaniu funkcji. Pamiętaj, że jeżeli dane składają się z kilku części (np. autorzy zbioru danych podzielili dane na część treningową i testową), opisz jak je łączysz i połącz te dane razem, gdyż nas ten podział nie interesuje.
+
+<span style="font-size: 17px">Wybrana baza danych do analizy to **"Diamonds Prices"**. Dostępna jest do pobrania na stronie *https://www.kaggle.com/datasets/nancyalaswad90/diamonds-prices*.</span>
+
+<span style="font-size: 15px">*Jakie informacje zawarte są w bazie danych Diamond Prices?*
+
+Jest to zbiór danych zawierający ceny i różne atrybuty około 54 000 diamentów o szlifie okrągłym.</span>
+
+W tym przypadku nie ma podziału na części: treningową i testową, więc nie było potrzeby ich łączenia. 
+
+Do wczytania pliku z bazą danych wykorzystujemy bibliotekę **"data.table"**, a następnie używamy funkcji **"read.csv"**, która plik *.csv* od razu przedstawia w formie docelowej tabeli.
+
+Opcjonalnie można użyć funkcji **"fread"**, jednakże wtedy kody muszą być zmodyfikowane przy wczytywaniu wartości macierzy.
+
+```{r}
+library(data.table)
+diamonds <- read.csv("Diamonds Prices2022.csv")
+```
+
+<span style="font-size: 15px"> Prezentacja nazw kolumn w bazie danych *Diamonds Prices* wskaże jakiego rodzaju dane były brane pod uwagę przy wykonywaniu zestawienia.</span>
+
+```{r}
+# Wypisanie nazw kolumn z tabeli:
+print(paste("Nazwy kolumn:", paste(colnames(diamonds), collapse = ", ")))
+
+```
+Nazwy kolumn odpowiednio odpowiadają zależnościom omówionym w poniższej tabeli.
+```{r}
+library(data.table)
+colname <- data.table(
+  "Nazwy kolumn" = c("X", "carat", "cut", "color", "clarity","depth", "table","price", "x", "y", "z"),
+  "Objaśnienie" = c("numer porządkowy", "karaty", "szlif", "kolor diamentu", "czystość diamentu","głębokość","tabela", "cena diamentu w $", "długość diamentu w mm", "szerokość diamentu w mm", "głębokość diamentu w mm"))
+library(knitr)
+kable(colname)
+
+```
+
+Można zwrócić uwagę również na kolumnę zawierającą informacje o kolorze diamentu.
+Poniżej objaśnienie symboli używanych w kolumnie  `colors`.
+
+```{r}
+ color_freq <- as.data.frame(table(diamonds$color))
+print(color_freq)
+```
+
+**Barwa D i E** – diamenty o tej barwie zalicza się do grupy diamentów bezbarwnych, które są bardzo rzadko spotykane. 
+
+**Barwa F i G** to również rzadko spotykane odcienie - określana jest jako delikatna biel lub czysta biel.
+
+
+**Barwa H** – jest najczęściej stosowana w jubilerstwie, określana jako biel. Diamenty te należą do grupy bliskich bezbarwnym. 
+
+
+**Barwy I i J** określa się jako stonowaną biel.
+
+![Barwa diamentów](https://www.diamenty.pl/images/upload/barwa.jpg)
+
+## 2. Omów odczytane dane. Która kolumna jest według Ciebie główną kolumną modelowaną przez dane, a które kolumny dostarczają dodatkowych atrybutów danych.
+
+Główną kolumną jest kolumna "carat", ponieważ jest to jednen z najważniejszych czynników przy wyborze i wycenie diamentów, pozostałe kolumny dostarczają dodatkowych atrybutów danych.
+
+## 3. Pokaż statystyki odczytanych danych (ile jest wierszy, jakiego typu jest główna kolumna w danych, a jakich typów są pozostałe kolumny, główne statystyki dotyczące każdej kolumny).
+
+### Statystyki odczytanych danych:
+
+Najpierw sprawdzimy, ile jest wierszy i jakie są kolumny w zbiorze danych:
+
+```{r}
+str(diamonds)
+```
+
+
+Możemy uzyskać podsumowanie analizowanej tabeli i wyświetlić w bardziej przejrzysty spodób ilość wierszy i kolumn.
+
+```{r}
+# Ile jest wierszy i kolumn jest w wybranej bazie danych:
+print(paste("Dane składają się z", nrow(diamonds), "wierszy i", ncol(diamonds), "kolumn."))
+
+```
+
+W zbiorze danych znajduje się **53943** wierszy i **11** kolumn (zmiennych). Pierwszą kolumnę `X` z numerami wierszy usuwamy z analizy.  
+Główną kolumną jest kolumna `carat` typu `numeric` (zmienna ciągła). Oprócz niej, w zbiorze danych są 3 kolumny typu `factor` (kolumny `cut`, `color`, `clarity` traktujemy jako zmienne kategoryczne), 5 kolumn typu `numeric` (`depth`, `table`, `x`, `y`, `z`) i 1 kolumna typu `integer` (`price`, zmienna dyskretna).  
+
+### Główne statystyki każdej kolumny zbioru danych są przedstawione poniżej:
+
+```{r}
+summary(diamonds)
+```
+
+## 4.  Omów brakujące dane. Jeśli dotyczą tylko kilku kolumn, może warto omówić je per kolumna?
+Aby sprawdzić czy w bazie danych znajdują się brakujące dane najpierw należy przyjrzeć się surowym danym z tabeli.
+
+```{r}
+#oglądam strukturę tabeli
+str(diamonds)
+```
+Przy sprawdzeniu danych brakujących można użyc funkcji `"sum(is.na(diamonds))"`, a nastepnie podsumować uzyskane wyników:
+
+```{r}
+#sprawdzam czy są jakieś brakujące dane
+sum(is.na(diamonds))
+```
+
+W tabeli nie uwidoczniono brakujących danych oznaczonych symbolami NA. Jeśli by jednak istniały, należałoby je zidentyfikować i usunąć, np. przy pomocy funkcji:
+
+diamonds_complete \<- diamonds[complete.cases(diamonds),]
+
+Alternatywną metodą mogłyby być próby uzupełnienia danych, np. interpolacji liniowej przy użyciu funkcji **na.approx()**
+
+Należy jednak sprawdzić, czy istnieją wartości zerowe - które mogą być brakującymi danymi.
+
+```{r}
+for (i in c("x", "y", "z")) {
+  zeros <- subset(diamonds, diamonds[[i]] == 0, x:z)
+}
+print(zeros)
+```
+
+W minimalnych wartościach x,y,z oznaczających "x: length in mm, y: width in mm,z: depth in mm" znajdują się wartości zerowe, co prawdopodobnie oznacza brak danych na temat wyszczególnionych powyżej wymiarów diamentów. Być może nie dokonano pomiarów i uzupełniono tabelę wartościami zerowymi.
+
+## 5.  Sprawdź, czy w różnych kolumnach nie są prezentowane te same dane, ale w inny sposób kodowane lub obliczone poprzez proste przekształcenie funkcyjne. Omów takie sytuacje.
+
+Trzy kolumny `cut`, `color` i `clarity` ze zbioru danych potencjalnie mogą kodować zmienną główną w inny sposób. Żeby to sprawdzić, najpierw zmieniamy typy tych 3 zmiennych.
+
+```{r}
+diamonds$cut <- as.factor(diamonds$cut)
+str(diamonds$cut)
+diamonds$color <- as.factor(diamonds$color)
+str(diamonds$color)
+diamonds$clarity <- as.factor(diamonds$clarity)
+str(diamonds$clarity)
+```
+
+W kolumnie `cut` jest 5 poziomów:
+
+```{r}
+levels(diamonds$cut)
+```
+
+W kolumnie `color` jest 7 poziomów:
+
+```{r}
+levels(diamonds$color)
+```
+
+W kolumnie `clarity` jest 8 poziomów:
+
+```{r}
+levels(diamonds$clarity)
+```
+
+Teraz wyciągniemy potrzebne kolumny do listy. W przypadku prezentacji tych samych danych w każdej zmiennej z listy będą tylko te same wartości kolumny `carat`.
+
+```{r}
+library(Matrix)
+carat_cut_list <- lapply(levels(diamonds$cut), function(x) {
+  diamonds[ diamonds[, "cut"] == x, "carat"]
+})
+names(carat_cut_list) <- levels(diamonds$cut)
+lapply(carat_cut_list, head)
+```
+
+W kolumnie `cut` nie są prezentowane te same dane, co w kolumnie `carat`, bo dla każdej kategorii (poziomu) z tej kolumny są różne wartości kolumny `carat`. Tzn., że dane w kolumnie `cut` są niezależne od danych w kolumnie `carat`. Te same karaty diamentów mogą mieć różne szlify.
+ 
+```{r}
+carat_color_list <- lapply(levels(diamonds$color), function(x) {
+  diamonds[ diamonds[, "color"] == x, "carat"]
+})
+names(carat_color_list) <- levels(diamonds$color)
+lapply(carat_color_list, head)
+```
+
+W kolumnie `color` nie są prezentowane te same dane, co w kolumnie `carat`, bo dla każdej kategorii (poziomu) z tej kolumny są różne wartości kolumny `carat`. Tzn., że dane w kolumnie `color` są niezależne od danych w kolumnie `carat`. Te same karaty diamentów mogą mieć różne kolory.
+
+```{r}
+carat_clarity_list <- lapply(levels(diamonds$clarity), function(x) {
+  diamonds[ diamonds[, "clarity"] == x, "carat"]
+})
+names(carat_clarity_list) <- levels(diamonds$clarity)
+lapply(carat_clarity_list, head)
+```
+
+W kolumnie `clarity` nie są prezentowane te same dane, co w kolumnie `carat`, bo dla każdej kategorii (poziomu) z tej kolumny są różne wartości kolumny `carat`. Tzn., że dane w kolumnie `clarity` są niezależne od danych w kolumnie `carat`. Te same karaty diamentów mogą mieć różną przejrzystość.   
+Pozostałe kolumny też nie prezentują tych samych danych w inny sposób.
+
+## 6. Omów kwestię ewentualnych danych odstających. Dane odstające możesz zidentyfikować na wykresach.
+
+Zbadane kolumny pod kątęm wartości odstających to carat, depth, table, z, y, z. Kolumna price została odrzucona, ze względu na to że wartość odstająca może wynikać z czynników nie związanych z danymi w zbiorze (takimi jak waga czy kolor), diament z odstającą ceną mógł być sprzedany na aukcji lub mieć wartość historyczną, z czego może wynikać jego nietypowa cena. Kolumna ...1, służy wyłącznie do uporządkowania zbioru, natomiast kolumny cut, color, clarity nie są wartościami numerycznymi stąd też nie mogą zostać poddane analizie.
+
+Wartości odstające można zaprezentować poniższych na wykresach:
+
+
+```{r}
+boxplot(diamonds$carat) # Tworzę boxplot kolumny carat
+```
+
+
+Ze względu na różnorodność diamentów w zbiorze za wartości odstające uznane zostały wartości powyżej 4.00, są to pojedyncze przypadki i mogą one zakłócać wyliczenie średniej wagi znajdujących się w zbiorze diamentów, w kolumnie nie znajdują się jednak wartości odstające od normy stąd też nie występuje potrzeba ich usunięcia.
+
+```{r}
+boxplot(diamonds$depth) # Tworzę boxplot kolumny depth
+```
+
+
+Za wartości odstające można uznać wartości poniżej 45 i powyżej 75, ze względu na specyfikę badanego zbioru nie są to wartości odstające od normy stąd też nie występuje potrzeba ich usunięcia.
+
+```{r}
+boxplot(diamonds$table) # Tworzę boxplot kolumny table
+```
+
+
+Za wartości odstające można uznać wartości poniżej 50 i powyżej 60, ze względu na specyfikę badanego zbioru nie są to wartości odstające od normy, zależą one od sposobu obróbki diamentu, stąd też nie występuje potrzeba ich usunięcia. 
+
+```{r}
+boxplot(diamonds$x)# Tworzę boxplot kolumny x
+```
+
+Za wartości odstające można uznać wartości poniżej 3 i powyżej 9, zostały wykryte wartości odstające w postaci 0, są one uznane za brak danych i zaleca się uzupełnienie, bądź usunięcie. Wartości powyżej 9 ze względu na specyfikę badanego zbioru nie są wartościami odstającymi od normy stąd też nie występuje potrzeba ich usunięcia.
+
+```{r}
+boxplot(diamonds$y) #Tworzę boxplot kolumny Y
+```
+
+Za wartości odstające można uznać wartości poniżej 3 i powyżej 9, zostały wykryte wartości odstające w postaci 0, są one uznane za brak danych i zaleca się uzupełnienie, bądź usunięcie. Wartości powyżej 9 do 11 ze względu na specyfikę badanego zbioru nie są wartościami odstającymi od normy stąd też nie występuje potrzeba ich usunięcia. Wartości 31.80 i 58.90 są wartościami odstającymi od normy, mogącymi wynikać z błędu, zaleca się sprawdzenie i poprawę lub usunięcie wartości.
+
+
+```{r}
+boxplot(diamonds$z) # Tworzę boxplot kolumny Z
+```
+
+Za wartości odstające można uznać wartości poniżej 3 i powyżej 5, zostały wykryte wartości odstające w postaci 0, są one uznane za brak danych i zaleca się uzupełnienie, bądź usunięcie. Wartości powyżej 5 do 8.06 ze względu na specyfikę badanego zbioru nie są wartościami odstającymi od normy stąd też nie występuje potrzeba ich usunięcia. Wartość 31.80 jest wartością odstają od normy, mogącą wynikać z błędu, zaleca się sprawdzenie i poprawę lub usunięcie wartości.
+
+```{r}
+#bez kolumny "price"
+for (k in c("carat", "depth", "table", "x", "y", "z")) {
+  outliers <- boxplot.stats(diamonds[[k]])$out
+  outliers_ind <- which(diamonds[[k]] %in% c(outliers))
+  print(paste("Ilość wierszy z wartościami odstającymi dla zmiennej", k))
+  str(outliers_ind) #w [...] pokazuje ilość wartości odstających i pierwsze 10 numerów wierszy z wartościami odstającymi
+}
+```
+Podsumowując, zarówno na wykresach, jak i w statystykach widoczne są wartości odstające. Jednakże w przypadku diamentów nie powinno się ich za takie uznawać. 
+Nie są to błędne pomiary, ani wynik źle skalibrowanych urządzeń wykorzystywanych do ich wykonania. 
+Cena diametu, waga czy wymiary mogą się różnić między sobą i należy przyjąć, że każda odstająca wartość od pewnej normy, czy średniej w tym przypadku jest możliwa.
+
+
+## 7. Jeśli uznasz, że warto, zaprezentuj wczytane dane lub ich wycinek przy użyciu wykresów, które będą czytelnie przekazywać możliwie najwięcej informacji o danych zachowując estetyczną formę.
+
+Przyjrzyjmy się zależności pomiędzy ceną diamentów a jego wagą w karatach.
+
+```{r}
+    #sprawdzam wartości do wykresów
+    sapply(diamonds, class)
+```
+
+```{r}
+    #zmieniam character na as.factor aby nie było problemów z wykresami.
+    diamonds$cut <- as.factor(diamonds$cut)
+    diamonds$color <- as.factor(diamonds$color)
+    diamonds$clarity <- as.factor(diamonds$clarity)
+```
+
+
+Przyjrzyjmy się zależności między ceną a wagą w karatach.
+
+```{r}
+    library(ggplot2)
+    ggplot(diamonds, aes(x = carat, y = price)) +
+      geom_point(size = 2, color = "#ADC7FF", alpha = 0.5) +
+      geom_smooth(method = "lm", color = "#EF4836") +
+      xlab("Waga w karatach") +
+      ylab("Cena ($)") +
+      ggtitle("Cena vs Waga w karatach") +
+      theme(plot.title = element_text(hjust = 0.5, size = 16, color = "#363795")) +
+      theme(axis.title = element_text(size = 14, color = "#363795"))
+
+```
+
+Czerwona linia może prognozować tendencję wzrostową cen diamentów w najbliższych latach.
+
+## Wykres pokazujący częstotliwość występowania różnych typów szlifowania diamentów:
+
+```{r}
+  cut_freq <- table(diamonds$cut)
+    barplot(cut_freq, xlab = "Szlif", ylab = "Częstotliwość", col = "#FFFFE0", las = 2,
+            main = "Częstotliwość występowania szlifów", cex.lab = 0.8, 
+            cex.main = 1.5, font.main = 2,
+            xpd = TRUE, adj = 0.5,
+            cex.axis = 0.6,
+            axis.lty = 0.75)
+```
+  
+## Wykres przedstawiający zależność między kolorem diamentu, a częstością jego występowania: 
+
+```{r}
+ #Zależność między kolorem, a częstością występowania. 
+   
+    col_palette <- colorRampPalette(c("lightblue", "lightgrey", "lightyellow"))(n = 7)
+    barplot(color_freq$Freq, names.arg = color_freq$Var1,
+            xlab = "Kolor", ylab = "Częstotliwość",
+            main = "Częstotliwość występowania koloru",
+            col = col_palette[match(color_freq$Var1, levels(diamonds$color))],
+            border = "black",
+            cex.lab = 1.2, cex.main = 1.5, font.main = 2,
+            xpd = TRUE, adj = 0.5, cex.axis = 1.2,
+            axis.lty = 2)
+```
+
+
+## Wykres obrazujący zależność między ceną diamentu a jego stopniem czystości:
+
+```{r}
+    library(ggplot2)
+    ggplot(diamonds, aes(x=clarity, y=price)) + 
+      geom_boxplot(alpha=0.5) + 
+      xlab("Czystość") + 
+      ylab("Cena ($)") + 
+      ggtitle("Cena a czystość") +
+      scale_x_discrete(limits=c("IF", "VVS1", "VVS2", "VS1", "VS2", "SI1", "SI2", "I1"),
+                     labels = c("IF - Internally Flawless", 
+                                "VVS1 - Very Very Slightly Included",
+                                "VVS2 - Very Very Slightly Included",
+                                "VS1 - Very Slightly Included",
+                                "VS2 - Very Slightly Included",
+                                "SI1 - Slightly Included",
+                                "SI2 - Slightly Included",
+                                "I1 - Included")) +
+      theme(axis.text.x=element_text(angle=60, hjust=1)) +
+      theme(legend.position="right")
+```
+
+### Wyróżnia się 5 podstawowych klas czystości diamentów:
+
+IF – lupowo czysty,
+
+VVS – bardzo, bardzo małe inkluzje,
+
+VS – bardzo małe inkluzje,
+
+SI – małe inkluzje,
+
+I – zanieczyszczenia widoczne gołym okiem.
+
+##### Dla zobrazowania można przedstawić grafikę 
+
+![Skala czystości diamentów](https://www.geselle.pl/pliki/informacje-i-porady/4c/czystosc-brylantow-w-skali-4c-geselle-jubiler.png)
+```{r}
+sessionInfo()
+```
